@@ -18,6 +18,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="http://127.0.0.1:8000/login")
 
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="http://127.0.0.1:80/login")
+
 
 def verify_password(plain_password, password):
     return pwd_context.verify(plain_password, password)
@@ -32,7 +34,8 @@ def get_user(db, username: str):
     if user:
         user_dict = vars(user[0])
         return UserSchema.FinalUserData(**user_dict)
-
+    else:
+        return {}
 
 def authenticate_user(db, username: str, password: str):
     user = get_user(db, username)
@@ -122,20 +125,20 @@ def get_users(**kwargs):
         if 'limit' in kwargs:
             limit = kwargs['limit']
 
-        list_of_users = []
         if 'user_id' in kwargs:
             user_id = kwargs['user_id']
             list_of_users = db.get(models.User, user_id)
-            print(list_of_users, type(list_of_users),
-                  '------------------------------------')
         else:
             list_of_users = db.query(models.User).offset(
                 skip).limit(limit).all()
-
-        return list_of_users
+        if list_of_users:
+            return list_of_users
+        else:
+            raise HTTPException(
+            status_code=502, detail="This user id is not found in our database . pls enter any correct usesr id") 
     else:
         raise HTTPException(
-            status_code=404, detail="Database error")
+            status_code=502, detail="Database error")
 
 
 def edit_user(db, userdata, user_id):
