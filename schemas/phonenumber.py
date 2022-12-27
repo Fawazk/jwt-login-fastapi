@@ -1,6 +1,7 @@
 import phonenumbers
 from pydantic.validators import strict_str_validator
 
+
 class PhoneNumber(str):
     """Phone Number Pydantic type, using google's phonenumbers"""
 
@@ -12,11 +13,11 @@ class PhoneNumber(str):
     @classmethod
     def validate(cls, v: str):
         # Remove spaces
-        v = v.strip().replace(' ', '')
+        v = v.strip().replace(" ", "")
 
         try:
             pn = phonenumbers.parse(v)
         except phonenumbers.phonenumberutil.NumberParseException:
-            raise ValueError('invalid phone number format')
+            raise ValueError("invalid phone number format")
 
         return cls(phonenumbers.format_number(pn, phonenumbers.PhoneNumberFormat.E164))

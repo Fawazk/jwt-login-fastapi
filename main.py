@@ -1,5 +1,4 @@
-
-from fastapi import (FastAPI,Request, status)
+from fastapi import FastAPI, Request, status
 from sqlmodel import SQLModel
 from database import engine
 from routers import address, contact, user
@@ -25,4 +24,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
-

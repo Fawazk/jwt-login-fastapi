@@ -1,6 +1,7 @@
-
-from pydantic import BaseModel, validator
-from typing import Optional
+from pydantic import BaseModel, validator,Field
+from typing import Optional,Union
+from .address import FinalAddressData
+from .contact import FinalContactInfoData
 
 
 # pertner Schema
@@ -13,6 +14,7 @@ class Token(BaseModel):
 #     username: str | None = None
 class TokenData(BaseModel):
     username: str | None = None
+
 
 class LoginData(TokenData):
     password: str
@@ -29,7 +31,7 @@ class FinalSuperUserData(UserData):
     class Config:
         validate_assignment = True
 
-    @validator('is_super_user')
+    @validator("is_super_user")
     def set_is_super_user(cls, is_super_user):
         return True
 
@@ -44,5 +46,6 @@ class FinalUserData(UserData):
 
 class UserAllData(BaseModel):
     user: Optional[FinalUserData]
-    address: list
-    contact: list
+    address: Optional[list[FinalAddressData]] | list = None
+    contact: Optional[list[FinalContactInfoData]] | list = None
+    
